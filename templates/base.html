@@ -1,0 +1,46 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>{{ page_title|default:"BTC Loyalty Infrastructure" }}</title>
+    {% block head_extra %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/ui.css' %}" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <a class="brand" href="/">
+          <span class="brand__mark" aria-hidden="true"></span>
+          <span>
+            <span class="brand__title">Earn Forever</span>
+            <span class="brand__subtitle">Merchant rewards infrastructure</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/#how-it-works">How it works</a>
+          <a class="nav-link" href="/demo">Demo</a>
+          <a class="nav-link" href="/demo/receipt/rr_demo_alice_001">Customer receipt</a>
+        </nav>
+        {% if request.path == "/demo" %}
+          <div id="demo-nav-status" class="site-status" style="display: flex; gap: 0.75rem; align-items: center;">
+            <span>{{ treasury.coverage_status }} · {{ treasury.coverage_ratio_display }}</span>
+            <form method="post" action="/demo/actions/reset" hx-post="/demo/actions/reset" hx-target="#demo-dashboard-state" hx-swap="outerHTML settle:120ms">
+              {% csrf_token %}
+              <button type="submit" style="color: #F8F4EA; border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; padding: 0.4rem 0.75rem; background: rgba(255,255,255,0.04);">Reset</button>
+            </form>
+          </div>
+        {% endif %}
+      </header>
+      <main class="page page--wide">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

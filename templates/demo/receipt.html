@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="receipt-page customer-receipt-page">
+    <a class="crumb" href="/demo">Back to Alice simulator</a>
+    <div class="receipt-document customer-receipt">
+      <div class="receipt-document__header">
+        <div>
+          <p class="poc-kicker">Satoshi Cafe loyalty receipt</p>
+          <h1>Alice Chen</h1>
+          <p>A simple aggregate view of Alice's weekly sats receipts and merchant-funded reward status.</p>
+        </div>
+        <span class="receipt-status">{{ price_status_display }}</span>
+      </div>
+
+      <div class="customer-reward-hero">
+        <span>Reward ready</span>
+        <strong>{{ reward_ready_usd_display }}</strong>
+        <p>{{ reward_ready_sats_display }} at the current BTC price of {{ current_btc_price_display }}.</p>
+      </div>
+
+      <div class="receipt-metrics">
+        <div><span>Total spent</span><strong>{{ total_spent_display }}</strong></div>
+        <div><span>Total sats spent</span><strong>{{ total_sats_spent_display }}</strong></div>
+        <div><span>Rewards paid</span><strong>{{ rewards_paid_usd_display }}</strong></div>
+        <div><span>Rewards paid sats</span><strong>{{ rewards_paid_sats_display }}</strong></div>
+        <div><span>Current BTC price</span><strong>{{ current_btc_price_display }}</strong></div>
+        <div><span>Last checked</span><strong>{{ last_price_checked_at }}</strong></div>
+      </div>
+
+      {% if latest_purchase %}
+        <div class="formula-card formula-card--large">
+          <span>Latest weekly receipt</span>
+          <strong>Week {{ latest_purchase.week_number }}: {{ latest_purchase.usd_spent_display }} = {{ latest_purchase.sats_spent_display }} at {{ latest_purchase.btc_price_at_purchase_display }}</strong>
+        </div>
+      {% else %}
+        <div class="formula-card formula-card--large">
+          <span>Latest weekly receipt</span>
+          <strong>No sats receipts yet.</strong>
+        </div>
+      {% endif %}
+
+      <div class="receipt-explainer">
+        <h2>Reward note</h2>
+        <p>The reward is variable and merchant-funded. It appears only when BTC rises above the reward checkpoint recorded on Alice's receipts.</p>
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <section class="stack">
+    <div class="hero hero--compact">
+      <div class="hero__card hero__card--wide">
+        <p class="eyebrow">Admin launchpad</p>
+        <h1>Admin Demo</h1>
+        <p class="lead">This page points straight at the Django admin sections that actually run the business. It is intentionally useful, and it mirrors the control plane the app depends on.</p>
+      </div>
+      <div class="hero__card">
+        <p class="eyebrow">What to inspect</p>
+        <ul class="content-list">
+          <li>Merchant records and policy lifecycle.</li>
+          <li>Transaction ingestion and receipts.</li>
+          <li>Treasury coverage and snapshots.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel panel--wide">
+      <p class="eyebrow">Admin launchpad</p>
+      <h2>Shortcuts</h2>
+      <div class="surface-grid">
+      {% for section in admin_sections %}
+        <a class="surface-link" href="{{ section.url }}">
+          <div>
+            <span class="surface-link__label">Admin area</span>
+            <span class="surface-link__title">{{ section.label }}</span>
+            <div class="surface-link__body">Jump to the live admin list view.</div>
+          </div>
+          <div class="surface-link__footer">Open section</div>
+        </a>
+      {% endfor %}
+      </div>
+    </div>
+
+    <div class="wide-panel">
+      <section class="panel panel--wide">
+        <div class="panel__header">
+          <div>
+            <p class="eyebrow">Why it matters</p>
+            <h2>Control plane</h2>
+          </div>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div><div class="timeline-item__index">OPS</div></div>
+            <div>
+              <div class="timeline-item__title">Review live merchants and policies</div>
+              <div class="timeline-item__body">This is where the business gets inspected, corrected, and maintained.</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div><div class="timeline-item__index">LEDGER</div></div>
+            <div>
+              <div class="timeline-item__title">Inspect transactions and receipts</div>
+              <div class="timeline-item__body">The admin is the easiest way to see the underlying state transitions.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="wide-panel__aside">
+        <section class="panel panel--wide">
+          <div class="panel__header">
+            <div>
+              <p class="eyebrow">System of record</p>
+              <h2>Notes</h2>
+            </div>
+          </div>
+          <div id="system-record-root" class="card" data-message="{{ system_record_text }}"></div>
+        </section>
+      </aside>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/admin-demo.js' %}"></script>
+{% endblock %}

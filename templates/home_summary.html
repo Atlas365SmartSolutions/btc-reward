@@ -1,0 +1,164 @@
+<section class="stack" id="home-summary">
+  <div class="panel panel--wide">
+    <div class="panel__header">
+      <div>
+        <p class="eyebrow">Live overview</p>
+        <h2>Production snapshot</h2>
+      </div>
+      <span class="badge">Rendered from database state</span>
+    </div>
+
+    <div class="metric-grid metric-grid--large">
+      <div class="metric-card metric-card--tall">
+        <span class="metric-card__label">Merchants</span>
+        <span class="metric-card__value">{{ counts.merchants }}</span>
+        <div class="metric-card__help">Merchant accounts available to ops.</div>
+      </div>
+      <div class="metric-card metric-card--tall">
+        <span class="metric-card__label">Active policies</span>
+        <span class="metric-card__value">{{ counts.active_policies }}</span>
+        <div class="metric-card__help">Policies currently governing accrual.</div>
+      </div>
+      <div class="metric-card metric-card--tall">
+        <span class="metric-card__label">Transactions</span>
+        <span class="metric-card__value">{{ counts.transactions }}</span>
+        <div class="metric-card__help">BTC spends ingested into the ledger.</div>
+      </div>
+      <div class="metric-card metric-card--tall">
+        <span class="metric-card__label">Receipts</span>
+        <span class="metric-card__value">{{ counts.receipts }}</span>
+        <div class="metric-card__help">Reward receipts issued so far.</div>
+      </div>
+    </div>
+
+    <div class="stats-slab" style="margin-top: 1rem;">
+      <div class="slab-item">
+        <div class="slab-item__label">Active wallets</div>
+        <div class="slab-item__value">{{ counts.active_wallets }}</div>
+        <div class="slab-item__body">Treasury addresses holding reserves.</div>
+      </div>
+      <div class="slab-item">
+        <div class="slab-item__label">Pending ingestions</div>
+        <div class="slab-item__value">{{ counts.pending_ingestions }}</div>
+        <div class="slab-item__body">Requests still in processing state.</div>
+      </div>
+      <div class="slab-item">
+        <div class="slab-item__label">Queued payouts</div>
+        <div class="slab-item__value">{{ counts.queued_payouts }}</div>
+        <div class="slab-item__body">Payout batches waiting to move.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wide-panel">
+    <section class="panel panel--wide">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Reserve posture</p>
+          <h3>{{ featured_merchant.name }}</h3>
+        </div>
+        {% if featured_health.is_healthy %}
+          <span class="status status--ok">Healthy</span>
+        {% else %}
+          <span class="status status--bad">Under target</span>
+        {% endif %}
+      </div>
+      <dl class="definition-list">
+        <div class="definition-item">
+          <dt>Merchant ID</dt>
+          <dd>{{ featured_merchant.id }}</dd>
+        </div>
+        <div class="definition-item">
+          <dt>Coverage ratio</dt>
+          <dd>{{ featured_coverage_ratio }}</dd>
+        </div>
+        <div class="definition-item">
+          <dt>Eligible liabilities</dt>
+          <dd>${{ featured_health.eligible_liabilities_usd }}</dd>
+        </div>
+        <div class="definition-item">
+          <dt>Treasury allocated</dt>
+          <dd>${{ featured_health.treasury_allocated_usd }}</dd>
+        </div>
+        <div class="definition-item">
+          <dt>Active policy</dt>
+          <dd>{% if featured_policy %}{{ featured_policy.merchant_retention_bps }} bps / {{ featured_policy.customer_share_bps }} bps{% else %}No active policy{% endif %}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <aside class="wide-panel__aside">
+      <section class="panel panel--wide">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Latest activity</p>
+            <h3>Most recent records</h3>
+          </div>
+          <span class="badge">Fresh from the database</span>
+        </div>
+        <div class="timeline">
+          {% if latest_transaction %}
+            <div class="timeline-item">
+              <div><div class="timeline-item__index">TX</div></div>
+              <div>
+                <div class="timeline-item__title">{{ latest_transaction.merchant.name }}</div>
+                <div class="timeline-item__body">{{ latest_transaction.customer.email }} spent {{ latest_transaction.sats_spent }} sats.</div>
+              </div>
+            </div>
+          {% else %}
+            <div class="empty-state">No transactions have been ingested yet.</div>
+          {% endif %}
+
+          {% if latest_receipt %}
+            <div class="timeline-item">
+              <div><div class="timeline-item__index">RCPT</div></div>
+              <div>
+                <div class="timeline-item__title">Receipt {{ latest_receipt.id }}</div>
+                <div class="timeline-item__body">Status {{ latest_receipt.status }} for {{ latest_receipt.customer.email }}.</div>
+              </div>
+            </div>
+          {% else %}
+            <div class="empty-state">No reward receipts have been written yet.</div>
+          {% endif %}
+
+          {% if latest_ingestion %}
+            <div class="timeline-item">
+              <div><div class="timeline-item__index">ING</div></div>
+              <div>
+                <div class="timeline-item__title">{{ latest_ingestion.idempotency_key }}</div>
+                <div class="timeline-item__body">Ingestion state: {{ latest_ingestion.status }}.</div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="panel panel--wide">
+    <div class="panel__header">
+      <div>
+        <p class="eyebrow">Why it exists</p>
+        <h3>Proper demo surfaces</h3>
+      </div>
+      <span class="badge">Use the same data in the admin and the app</span>
+    </div>
+    <div class="story-grid">
+      <div class="story-card">
+        <div class="story-card__step">Visibility</div>
+        <span class="story-card__title">Everything important is visible up front.</span>
+        <div class="story-card__body">The app surfaces active counts, reserve status, recent transactions, and receipt state instead of hiding them behind dead filler screens.</div>
+      </div>
+      <div class="story-card">
+        <div class="story-card__step">Workflow</div>
+        <span class="story-card__title">Each page shows a real business step.</span>
+        <div class="story-card__body">Merchant detail, treasury coverage, and receipts are tied to the same operational record chain.</div>
+      </div>
+      <div class="story-card">
+        <div class="story-card__step">Control</div>
+        <span class="story-card__title">Admin and app share the same source of truth.</span>
+        <div class="story-card__body">That gives the demo a proper product feel instead of a static marketing shell.</div>
+      </div>
+    </div>
+  </section>
+</section>

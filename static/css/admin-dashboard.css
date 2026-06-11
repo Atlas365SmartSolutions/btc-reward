@@ -1,0 +1,255 @@
+:root {
+  --ops-gap: 18px;
+  --ops-panel-radius: 8px;
+}
+
+body.dashboard #container,
+body.dashboard #content,
+body.dashboard #content-main {
+  max-width: none;
+}
+
+body.dashboard #container {
+  width: 100%;
+  min-width: 0;
+}
+
+body.dashboard #content {
+  width: auto;
+  margin: 0;
+}
+
+body.dashboard #content-main {
+  float: none;
+  width: auto;
+  margin-right: 0;
+}
+
+body.dashboard #content-related {
+  display: none;
+}
+
+.ops-dashboard {
+  margin-bottom: 24px;
+}
+
+.ops-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ops-gap);
+  align-items: start;
+}
+
+.ops-dashboard-main {
+  min-width: 0;
+}
+
+.ops-dashboard-side {
+  min-width: 0;
+  position: static;
+}
+
+.ops-dashboard__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: var(--ops-gap);
+}
+
+.ops-dashboard__header h1 {
+  margin: 0 0 4px;
+  font-size: 1.35rem;
+}
+
+.ops-dashboard__header p {
+  margin: 0;
+  color: var(--body-quiet-color);
+}
+
+.ops-runtime {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  max-width: 440px;
+}
+
+.ops-runtime span,
+.ops-runtime strong {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 4px 8px;
+  background: var(--darkened-bg);
+  color: var(--body-fg);
+  font-size: 0.78rem;
+}
+
+.ops-runtime strong {
+  color: var(--error-fg);
+}
+
+.ops-metrics {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: var(--ops-gap);
+}
+
+.ops-metrics a {
+  display: block;
+  border: 1px solid var(--border-color);
+  border-radius: var(--ops-panel-radius);
+  padding: 12px;
+  background: var(--body-bg);
+  text-decoration: none;
+  min-height: 88px;
+}
+
+.ops-metrics span {
+  display: block;
+  color: var(--body-quiet-color);
+  font-size: 0.78rem;
+}
+
+.ops-metrics strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--body-fg);
+  font-size: 1.35rem;
+}
+
+.ops-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: var(--ops-gap);
+  margin-bottom: var(--ops-gap);
+}
+
+.ops-panel {
+  border: 1px solid var(--border-color);
+  border-radius: var(--ops-panel-radius);
+  background: var(--body-bg);
+  overflow: hidden;
+}
+
+.ops-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ops-panel h2 {
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--darkened-bg);
+  font-size: 0.95rem;
+}
+
+.ops-panel table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ops-panel th,
+.ops-panel td {
+  padding: 9px 12px;
+  border-top: 1px solid var(--border-color);
+  text-align: left;
+  vertical-align: top;
+}
+
+.ops-panel th {
+  color: var(--body-quiet-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ops-empty {
+  margin: 0;
+  padding: 12px;
+  color: var(--body-quiet-color);
+}
+
+.ops-panel--actions .ops-actions-content {
+  padding: 12px;
+}
+
+.ops-panel--actions h3 {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+}
+
+.ops-panel--actions .actionlist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ops-panel--actions .actionlist li {
+  padding: 8px 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.ops-panel--actions .actionlist li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.ops-pill {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.ops-pill--ok {
+  background: #e5f8ed;
+  color: #0f6b3b;
+}
+
+.ops-pill--bad {
+  background: #fee8e7;
+  color: #a5281f;
+}
+
+@media (max-width: 1200px) {
+  .ops-metrics {
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+  }
+
+  .ops-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .ops-dashboard__header {
+    display: block;
+  }
+
+  .ops-runtime {
+    justify-content: flex-start;
+    margin-top: 10px;
+  }
+
+  .ops-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .ops-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ops-metrics a {
+    min-height: 80px;
+  }
+
+  .ops-panel th,
+  .ops-panel td {
+    padding: 8px 10px;
+  }
+}

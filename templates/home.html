@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="poc-hero product-hero">
+    <div class="poc-hero__copy">
+      <p class="poc-kicker">Bitcoin rewards infrastructure for merchants</p>
+      <h1>Turn Bitcoin payments into customer rewards.</h1>
+      <p class="poc-lead">Earn Forever helps merchants give customers a Bitcoin reward receipt when they pay in BTC. If Bitcoin rises later, the customer can receive a variable merchant-funded reward.</p>
+      <p class="poc-legacy-line">No guaranteed yield. No token. No custody-first launch. Merchant-funded loyalty software.</p>
+      <div class="poc-actions">
+        <a class="poc-button" href="/demo">Try the demo</a>
+        <a class="poc-button poc-button--secondary" href="/demo/receipt/rr_demo_alice_001">View customer receipt</a>
+      </div>
+    </div>
+
+    <aside class="product-preview" aria-label="Alice Bitcoin purchase preview">
+      <div class="product-preview__header">
+        <div>
+          <span>Mini demo</span>
+          <strong>Alice buys with Bitcoin</strong>
+        </div>
+        <mark>Reward ready</mark>
+      </div>
+      <div class="poc-preview__grid">
+        <div><span>Purchase</span><strong>$42.18</strong></div>
+        <div><span>Bitcoin spent</span><strong>57,341 sats</strong></div>
+        <div><span>BTC price at payment</span><strong>$73,556/BTC</strong></div>
+        <div><span>Simulated BTC price</span><strong>$110,334/BTC</strong></div>
+        <div><span>Reward ready</span><strong>$2.11 / 1,912 sats</strong></div>
+      </div>
+      <p class="poc-preview__note">Each Bitcoin purchase creates a sats receipt. Rewards appear only when BTC has upside.</p>
+    </aside>
+  </section>
+
+  <section id="how-it-works" class="poc-section">
+    <div class="poc-section__heading">
+      <p class="poc-kicker">How it works</p>
+      <h2>A simple merchant-funded reward loop.</h2>
+    </div>
+    <div class="poc-card-grid poc-card-grid--three">
+      <article class="poc-card">
+        <span class="poc-card__label">1</span>
+        <h3>Customer pays in Bitcoin</h3>
+        <p>A customer buys something from the merchant using Bitcoin.</p>
+      </article>
+      <article class="poc-card">
+        <span class="poc-card__label">2</span>
+        <h3>Earn Forever creates a sats receipt</h3>
+        <p>The receipt records the purchase amount, sats spent, and BTC price at payment.</p>
+      </article>
+      <article class="poc-card">
+        <span class="poc-card__label">3</span>
+        <h3>Upside can become a reward</h3>
+        <p>If BTC rises later, the merchant can approve a variable reward in sats, store credit, or fiat equivalent.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="poc-section">
+    <div class="poc-section__heading">
+      <p class="poc-kicker">Why merchants use it</p>
+      <h2>Make Bitcoin payments feel more useful after checkout.</h2>
+    </div>
+    <div class="poc-card-grid">
+      <article class="poc-card">
+        <span class="poc-card__label">Customer psychology</span>
+        <h3>Make Bitcoin spending feel better</h3>
+        <p>Customers can spend BTC without feeling like they lost all future upside.</p>
+      </article>
+      <article class="poc-card">
+        <span class="poc-card__label">Receipts</span>
+        <h3>Create a receipt relationship</h3>
+        <p>Each BTC purchase becomes a customer-facing reward receipt the shopper can revisit.</p>
+      </article>
+      <article class="poc-card">
+        <span class="poc-card__label">Control</span>
+        <h3>Keep merchant control</h3>
+        <p>The merchant chooses the reward share and approves payouts before rewards are paid.</p>
+      </article>
+      <article class="poc-card">
+        <span class="poc-card__label">Loyalty</span>
+        <h3>Stay loyalty-first</h3>
+        <p>Rewards are variable, merchant-funded, and positioned as loyalty software.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="poc-section">
+    <div class="poc-section__heading">
+      <p class="poc-kicker">What the software provides</p>
+      <h2>Clean surfaces for receipts, estimates, and approval.</h2>
+    </div>
+    <div class="poc-card-grid">
+      <article class="poc-card">
+        <span class="poc-card__label">Merchant dashboard</span>
+        <h3>Set reward rules</h3>
+        <p>Set reward rules, review receipts, and approve payouts.</p>
+      </article>
+      <article class="poc-card">
+        <span class="poc-card__label">Reward receipt ledger</span>
+        <h3>Track each purchase</h3>
+        <p>Track each customer purchase, sats spent, BTC price, and reward status.</p>
+      </article>
+      <article class="poc-card">
+        <span class="poc-card__label">BTC price monitor</span>
+        <h3>Calculate reward estimates</h3>
+        <p>Use live BTC prices to calculate reward estimates.</p>
+      </article>
+      <article class="poc-card">
+        <span class="poc-card__label">Customer receipt page</span>
+        <h3>Show customer status</h3>
+        <p>Show customers their sats receipts, reward ready, and rewards paid.</p>
+      </article>
+      <article class="poc-card">
+        <span class="poc-card__label">Payout workflow</span>
+        <h3>Support merchant approval</h3>
+        <p>Support merchant-approved rewards in sats, store credit, or fiat equivalent.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="poc-section poc-section--cta">
+    <div class="poc-section__heading">
+      <p class="poc-kicker">See Alice's reward in action</p>
+      <h2>Try the lean Satoshi Cafe demo.</h2>
+      <p>In the demo, Alice makes Bitcoin purchases at Satoshi Cafe. Each purchase creates a sats receipt. Then you can simulate BTC upside and see how much reward Alice could receive.</p>
+    </div>
+    <div class="poc-actions">
+      <a class="poc-button" href="/demo">Open demo</a>
+      <a class="poc-button poc-button--secondary" href="/demo/receipt/rr_demo_alice_001">View Alice receipt</a>
+    </div>
+  </section>
+
+  <section class="poc-section">
+    <div class="poc-section__heading">
+      <p class="poc-kicker">Simple FAQ</p>
+      <h2>Clear boundaries for a merchant-funded reward product.</h2>
+    </div>
+    <div class="poc-faq">
+      <details open>
+        <summary>Is this guaranteed yield?</summary>
+        <p>No. Rewards are variable, merchant-funded, and depend on merchant rules, BTC price movement, and approval.</p>
+      </details>
+      <details>
+        <summary>Does the customer own the merchant's Bitcoin?</summary>
+        <p>No. The customer receives a reward receipt. The merchant controls its own Bitcoin and chooses whether to approve rewards.</p>
+      </details>
+      <details>
+        <summary>What can rewards be paid as?</summary>
+        <p>The demo shows sats equivalent, but merchants could also use store credit or fiat equivalent.</p>
+      </details>
+      <details>
+        <summary>What is mocked in this POC?</summary>
+        <p>Payments, payout execution, and wallet transfer are mocked. The demo focuses on the reward math, receipt flow, and customer experience.</p>
+      </details>
+    </div>
+  </section>
+
+  <footer class="poc-footer">
+    <div>
+      <strong>Earn Forever</strong>
+      <span>Bitcoin rewards infrastructure for merchants.</span>
+    </div>
+    <nav aria-label="Footer">
+      <a href="/">Home</a>
+      <a href="/demo">Demo</a>
+      <a href="/demo/receipt/rr_demo_alice_001">Customer receipt</a>
+    </nav>
+  </footer>
+{% endblock %}

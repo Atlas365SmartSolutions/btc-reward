@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="stack">
+    <div class="panel">
+      <p class="eyebrow">Merchant activity</p>
+      <h1>Transactions</h1>
+      <p class="lead">BTC spends enter here, get validated, and turn into reward receipts. This is the real workflow surface, not a placeholder.</p>
+    </div>
+
+    {% if transactions %}
+      <div class="stack">
+        {% for transaction in transactions %}
+          <article class="card">
+            <div class="merchant-card__top">
+              <div class="font-medium">{{ transaction.id }}</div>
+              <span class="badge">{{ transaction.created_at }}</span>
+            </div>
+            <div class="merchant-card__meta">
+              <span class="badge">Sats spent: {{ transaction.sats_spent }}</span>
+              <span class="badge">BTC price at purchase: ${{ transaction.btc_usd_price_at_purchase }}</span>
+              <span class="badge">Payment external ID: {{ transaction.payment_external_id|default:"n/a" }}</span>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">Transactions for {{ merchant_id }}</div>
+    {% endif %}
+  </section>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="stack">
+    <div class="panel panel--wide">
+      <p class="eyebrow">Reward receipt</p>
+      <h1>Reward Receipt {{ receipt_id }}</h1>
+      <p class="lead">This is the customer-facing record of a reward computation and receipt issuance. It should feel like a real artifact, not a throwaway placeholder.</p>
+    </div>
+
+    <div class="wide-panel">
+      <section class="panel panel--wide">
+        <div class="panel__header">
+          <div>
+            <p class="eyebrow">Customer summary</p>
+            <h2>Accrued reward</h2>
+          </div>
+          <span class="badge">Receipt view</span>
+        </div>
+        <div class="metric-grid metric-grid--large">
+          <div class="metric-card metric-card--tall">
+            <span class="metric-card__label">Customer</span>
+            <span class="metric-card__value">{{ customer_name }}</span>
+          </div>
+          <div class="metric-card metric-card--tall">
+            <span class="metric-card__label">Variable reward accrued</span>
+            <span class="metric-card__value">${{ customer_reward_usd }}</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="wide-panel__aside">
+        <section class="panel panel--wide">
+          <div class="panel__header">
+            <div>
+              <p class="eyebrow">What this proves</p>
+              <h2>Audit trail</h2>
+            </div>
+          </div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div><div class="timeline-item__index">REC</div></div>
+              <div>
+                <div class="timeline-item__title">Customer visible record</div>
+                <div class="timeline-item__body">The receipt captures the reward result for a specific spend event.</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div><div class="timeline-item__index">SYS</div></div>
+              <div>
+                <div class="timeline-item__title">Database-backed state</div>
+                <div class="timeline-item__body">The reward is derived from the same transaction and policy data used in admin.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <div class="panel panel--wide">
+      <div class="panel__header">
+        <div>
+          <p class="eyebrow">Receipt details</p>
+          <h2>Context</h2>
+        </div>
+      </div>
+      <div class="stats-slab">
+        <div class="slab-item">
+          <div class="slab-item__label">Customer</div>
+          <div class="slab-item__value">{{ customer_name }}</div>
+        </div>
+        <div class="slab-item">
+          <div class="slab-item__label">Reward amount</div>
+          <div class="slab-item__value">${{ customer_reward_usd }}</div>
+        </div>
+        <div class="slab-item">
+          <div class="slab-item__label">Receipt ID</div>
+          <div class="slab-item__value">{{ receipt_id }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

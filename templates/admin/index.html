@@ -1,0 +1,196 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static log %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static "admin/css/dashboard.css" %}">
+  <link rel="stylesheet" href="{% static "css/admin-dashboard.css" %}">
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+{% block content_title %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  {% if ops_dashboard %}
+    <section class="ops-dashboard" aria-label="Operations dashboard">
+      <div class="ops-layout">
+        <div class="ops-dashboard-main">
+          <div class="ops-dashboard__header">
+            <div>
+              <h1>Operations Dashboard</h1>
+              <p>Current production controls, reserve posture, ingestion health, and recent transaction flow.</p>
+            </div>
+            <div class="ops-runtime">
+              <span>DB: {{ ops_dashboard.runtime.database_engine }} / {{ ops_dashboard.runtime.database_host }}</span>
+              <span>Payment: {{ ops_dashboard.runtime.payment_backend }}</span>
+              <span>Oracle: {{ ops_dashboard.runtime.price_oracle_backend }}</span>
+              {% if ops_dashboard.runtime.debug %}<strong>DEBUG ON</strong>{% endif %}
+            </div>
+          </div>
+
+          <div class="ops-metrics">
+            <a href="{% url 'admin:merchants_merchant_changelist' %}">
+              <span>Merchants</span>
+              <strong>{{ ops_dashboard.counts.merchants }}</strong>
+            </a>
+            <a href="{% url 'admin:rewards_rewardpolicy_changelist' %}?status__exact=ACTIVE">
+              <span>Active policies</span>
+              <strong>{{ ops_dashboard.counts.active_policies }}</strong>
+            </a>
+            <a href="{% url 'admin:transactions_btctransaction_changelist' %}">
+              <span>Transactions</span>
+              <strong>{{ ops_dashboard.counts.transactions }}</strong>
+            </a>
+            <a href="{% url 'admin:receipts_rewardreceipt_changelist' %}">
+              <span>Receipts</span>
+              <strong>{{ ops_dashboard.counts.receipts }}</strong>
+            </a>
+            <a href="{% url 'admin:treasury_treasurywallet_changelist' %}?status__exact=ACTIVE">
+              <span>Active wallets</span>
+              <strong>{{ ops_dashboard.counts.active_wallets }}</strong>
+            </a>
+            <a href="{% url 'admin:transactions_ingestionrequest_changelist' %}?status__exact=FAILED">
+              <span>Failed ingestions</span>
+              <strong>{{ ops_dashboard.counts.failed_ingestions }}</strong>
+            </a>
+          </div>
+
+          <div class="ops-grid">
+            <section class="ops-panel">
+              <h2>Reserve Health</h2>
+              {% if ops_dashboard.reserve_rows %}
+                <div class="ops-table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Merchant</th>
+                        <th>Coverage</th>
+                        <th>Liabilities USD</th>
+                        <th>Allocated USD</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for row in ops_dashboard.reserve_rows %}
+                        <tr>
+                          <td><a href="{% url 'admin:merchants_merchant_change' row.merchant.pk %}">{{ row.merchant.name }}</a></td>
+                          <td>{{ row.coverage_ratio }}</td>
+                          <td>{{ row.liabilities_usd }}</td>
+                          <td>{{ row.allocated_usd }}</td>
+                          <td>{% if row.is_healthy %}<span class="ops-pill ops-pill--ok">Healthy</span>{% else %}<span class="ops-pill ops-pill--bad">Under</span>{% endif %}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% else %}
+                <p class="ops-empty">No merchants yet.</p>
+              {% endif %}
+            </section>
+
+            <section class="ops-panel">
+              <h2>Recent Transactions</h2>
+              {% if ops_dashboard.latest_transactions %}
+                <div class="ops-table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Transaction</th>
+                        <th>Merchant</th>
+                        <th>Customer</th>
+                        <th>Sats</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for tx in ops_dashboard.latest_transactions %}
+                        <tr>
+                          <td><a href="{% url 'admin:transactions_btctransaction_change' tx.pk %}">{{ tx.id|truncatechars:12 }}</a></td>
+                          <td>{{ tx.merchant.name }}</td>
+                          <td>{{ tx.customer.email }}</td>
+                          <td>{{ tx.sats_spent }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% else %}
+                <p class="ops-empty">No transactions yet.</p>
+              {% endif %}
+            </section>
+          </div>
+
+          <section class="ops-panel">
+            <h2>Ingestion Requests</h2>
+            {% if ops_dashboard.latest_ingestions %}
+              <div class="ops-table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Key</th>
+                      <th>Status</th>
+                      <th>Transaction</th>
+                      <th>Updated</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for ingestion in ops_dashboard.latest_ingestions %}
+                      <tr>
+                        <td><a href="{% url 'admin:transactions_ingestionrequest_change' ingestion.pk %}">{{ ingestion.idempotency_key|truncatechars:32 }}</a></td>
+                        <td>{{ ingestion.status }}</td>
+                        <td>{% if ingestion.transaction_id %}<a href="{% url 'admin:transactions_btctransaction_change' ingestion.transaction_id %}">{{ ingestion.transaction_id|truncatechars:12 }}</a>{% else %}-{% endif %}</td>
+                        <td>{{ ingestion.updated_at }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p class="ops-empty">No ingestion requests yet.</p>
+            {% endif %}
+          </section>
+        </div>
+
+        <aside class="ops-dashboard-side" aria-label="Recent admin actions">
+          <section class="ops-panel ops-panel--actions" id="recent-actions-module">
+            <h2>{% translate 'Recent actions' %}</h2>
+            <div class="ops-actions-content">
+              <h3>{% translate 'My actions' %}</h3>
+              {% get_admin_log 10 as admin_log for_user user %}
+              {% if not admin_log %}
+                <p class="ops-empty">{% translate 'None available' %}</p>
+              {% else %}
+                <ul class="actionlist">
+                  {% for entry in admin_log %}
+                    <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                      <span class="visually-hidden">{% if entry.is_addition %}{% translate 'Added:' %}{% elif entry.is_change %}{% translate 'Changed:' %}{% elif entry.is_deletion %}{% translate 'Deleted:' %}{% endif %}</span>
+                      {% if entry.is_deletion or not entry.get_admin_url %}
+                        {{ entry.object_repr }}
+                      {% else %}
+                        <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                      {% endif %}
+                      <br>
+                      {% if entry.content_type %}
+                        <span class="mini quiet">{% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}</span>
+                      {% else %}
+                        <span class="mini quiet">{% translate 'Unknown content' %}</span>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          </section>
+        </aside>
+      </div>
+    </section>
+  {% endif %}
+
+  {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

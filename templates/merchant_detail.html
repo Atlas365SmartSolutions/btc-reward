@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="stack">
+    <a class="crumb" href="/merchants">Back to merchants</a>
+
+    <div class="hero hero--compact">
+      <div class="hero__card hero__card--wide">
+        <p class="eyebrow">Merchant record</p>
+        <h1>Merchant {{ merchant.id }}</h1>
+        <p class="lead">{{ merchant.name }} is the control plane for policies, transactions, receipts, and treasury reserve checks.</p>
+      </div>
+      <div class="hero__card">
+        <p class="eyebrow">Reserve posture</p>
+        {% if is_healthy %}
+          <span class="status status--ok">Healthy</span>
+        {% else %}
+          <span class="status status--bad">Under target</span>
+        {% endif %}
+        <div class="definition-list" style="margin-top: 1rem;">
+          <div class="definition-item">
+            <dt>Coverage ratio</dt>
+            <dd>{{ coverage_ratio }}</dd>
+          </div>
+          <div class="definition-item">
+            <dt>Customer liabilities</dt>
+            <dd>${{ customer_liabilities_usd }}</dd>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-grid metric-grid--large">
+      <div class="metric-card metric-card--tall">
+        <span class="metric-card__label">Policies:</span>
+        <span class="metric-card__value">{{ policy_count }}</span>
+        <div class="metric-card__help">Reward policies attached to this merchant.</div>
+      </div>
+      <div class="metric-card metric-card--tall">
+        <span class="metric-card__label">Transactions:</span>
+        <span class="metric-card__value">{{ transaction_count }}</span>
+        <div class="metric-card__help">BTC spends already ingested.</div>
+      </div>
+      <div class="metric-card metric-card--tall">
+        <span class="metric-card__label">Treasury wallets:</span>
+        <span class="metric-card__value">{{ wallet_count }}</span>
+        <div class="metric-card__help">Wallets carrying coverage for liabilities.</div>
+      </div>
+    </div>
+
+    <div class="wide-panel">
+      <section class="panel panel--wide">
+        <div class="panel__header">
+          <div>
+            <p class="eyebrow">Current policy</p>
+            <h2>Active rules</h2>
+          </div>
+          {% if active_policy %}
+            <span class="badge">{{ active_policy.status }}</span>
+          {% else %}
+            <span class="badge">No active policy</span>
+          {% endif %}
+        </div>
+        {% if active_policy %}
+          <div class="stats-slab">
+            <div class="slab-item">
+              <div class="slab-item__label">Merchant retention</div>
+              <div class="slab-item__value">{{ active_policy.merchant_retention_bps }} bps</div>
+              <div class="slab-item__body">Share retained by the merchant.</div>
+            </div>
+            <div class="slab-item">
+              <div class="slab-item__label">Customer share</div>
+              <div class="slab-item__value">{{ active_policy.customer_share_bps }} bps</div>
+              <div class="slab-item__body">Share eligible for customer rewards.</div>
+            </div>
+            <div class="slab-item">
+              <div class="slab-item__label">Min coverage</div>
+              <div class="slab-item__value">{{ active_policy.min_coverage_ratio }}</div>
+              <div class="slab-item__body">Reserve threshold for continuing accrual.</div>
+            </div>
+          </div>
+        {% else %}
+          <div class="empty-state">No active policy is configured for this merchant.</div>
+        {% endif %}
+      </section>
+
+      <aside class="wide-panel__aside">
+        <section class="panel panel--wide">
+          <div class="panel__header">
+            <div>
+              <p class="eyebrow">Latest transaction</p>
+              <h2>Recent spend</h2>
+            </div>
+            {% if latest_transaction %}
+              <span class="badge">{{ latest_transaction.id|truncatechars:12 }}</span>
+            {% endif %}
+          </div>
+          {% if latest_transaction %}
+            <div class="timeline-item">
+              <div>
+                <div class="timeline-item__index">TX</div>
+              </div>
+              <div>
+                <div class="timeline-item__title">{{ latest_transaction.customer.email }}</div>
+                <div class="timeline-item__body">{{ latest_transaction.sats_spent }} sats at ${{ latest_transaction.btc_usd_price_at_purchase }} BTC/USD.</div>
+              </div>
+            </div>
+          {% else %}
+            <div class="empty-state">No transaction activity for this merchant yet.</div>
+          {% endif %}
+        </section>
+
+        <section class="panel panel--wide">
+          <div class="panel__header">
+            <div>
+              <p class="eyebrow">Latest wallet</p>
+              <h2>Treasury position</h2>
+            </div>
+            {% if latest_wallet %}
+              <span class="badge">{{ latest_wallet.status }}</span>
+            {% endif %}
+          </div>
+          {% if latest_wallet %}
+            <div class="timeline-item">
+              <div>
+                <div class="timeline-item__index">TW</div>
+              </div>
+              <div>
+                <div class="timeline-item__title">{{ latest_wallet.label }}</div>
+                <div class="timeline-item__body">Balance {{ latest_wallet.btc_balance }} BTC.</div>
+              </div>
+            </div>
+          {% else %}
+            <div class="empty-state">No treasury wallets are attached yet.</div>
+          {% endif %}
+        </section>
+      </aside>
+    </div>
+
+    <div class="panel panel--wide">
+      <div class="panel__header">
+        <div>
+          <p class="eyebrow">Quick actions</p>
+          <h2>Merchant sub-sections</h2>
+        </div>
+        <span class="badge">/merchants/{{ merchant_id }}</span>
+      </div>
+      <div class="grid-3">
+        <a class="merchant-card card-link" href="/merchants/{{ merchant_id }}/policies">
+          <div class="font-medium">Policies</div>
+          <div class="card-muted mt-1 text-sm">View policy settings and lifecycle state.</div>
+        </a>
+        <a class="merchant-card card-link" href="/merchants/{{ merchant_id }}/transactions">
+          <div class="font-medium">Transactions</div>
+          <div class="card-muted mt-1 text-sm">Review recently ingested BTC spend.</div>
+        </a>
+        <a class="merchant-card card-link" href="/merchants/{{ merchant_id }}/treasury">
+          <div class="font-medium">Treasury</div>
+          <div class="card-muted mt-1 text-sm">Inspect reserve coverage and snapshots.</div>
+        </a>
+      </div>
+    </div>
+  </section>
+{% endblock %}

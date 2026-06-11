@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="stack">
+    <div class="hero hero--compact">
+      <div class="hero__card hero__card--wide">
+        <p class="eyebrow">Merchant registry</p>
+        <h1>Merchants</h1>
+        <p class="lead">Each merchant record connects policies, transaction flow, treasury coverage, and reward issuance. This is the operational entry point, not a dead showcase page.</p>
+      </div>
+      <div class="hero__card">
+        <p class="eyebrow">What this page shows</p>
+        <ul class="content-list">
+          <li>Merchant identity and control links.</li>
+          <li>Policy, transaction, and wallet counts.</li>
+          <li>Reserve coverage status at a glance.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel panel--wide">
+      <div class="panel__header">
+        <div>
+          <p class="eyebrow">Registry view</p>
+          <h2>Active merchant accounts</h2>
+        </div>
+        <span class="badge">{{ merchant_rows|length }} visible merchants</span>
+      </div>
+
+      <div class="stack">
+      {% for row in merchant_rows %}
+        <article class="merchant-card merchant-card--feature">
+          <div class="merchant-card__top">
+            <div>
+              <div class="font-medium">{{ row.merchant.name }}</div>
+              <div class="merchant-card__id">{{ row.merchant.id }}</div>
+            </div>
+            {% if row.is_healthy %}
+              <span class="status status--ok">Healthy</span>
+            {% else %}
+              <span class="status status--warn">Review</span>
+            {% endif %}
+          </div>
+
+          <div class="merchant-card__meta">
+            <span class="badge">Policies: {{ row.policy_count }}</span>
+            <span class="badge">Transactions: {{ row.transaction_count }}</span>
+            <span class="badge">Treasury wallets: {{ row.wallet_count }}</span>
+            <span class="badge">Coverage: {{ row.coverage_ratio }}</span>
+          </div>
+
+          <div class="merchant-card__actions">
+            <a class="button" href="/merchants/{{ row.merchant.id }}">Open merchant</a>
+            <a class="button button--ghost" href="/merchants/{{ row.merchant.id }}/policies">Policies</a>
+            <a class="button button--ghost" href="/merchants/{{ row.merchant.id }}/transactions">Transactions</a>
+            <a class="button button--ghost" href="/merchants/{{ row.merchant.id }}/treasury">Treasury</a>
+          </div>
+        </article>
+      {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

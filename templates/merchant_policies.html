@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="stack">
+    <div class="panel">
+      <p class="eyebrow">Merchant policies</p>
+      <h1>Policies</h1>
+      <p class="lead">Reward policy controls are the rules that decide how much BTC spend is eligible and what reserve coverage must exist before accrual can continue.</p>
+    </div>
+
+    {% if policies %}
+      <div class="stack">
+        {% for policy in policies %}
+          <article class="card">
+            <div class="merchant-card__top">
+              <div class="font-medium">Status: {{ policy.status }}</div>
+              <span class="badge">Policy {{ policy.id }}</span>
+            </div>
+            <div class="merchant-card__meta">
+              <span class="badge">Merchant retention: {{ policy.merchant_retention_bps }} bps</span>
+              <span class="badge">Customer share: {{ policy.customer_share_bps }} bps</span>
+              <span class="badge">Min coverage: {{ policy.min_coverage_ratio }}</span>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">Reward policies for {{ merchant_id }}</div>
+    {% endif %}
+  </section>
+{% endblock %}

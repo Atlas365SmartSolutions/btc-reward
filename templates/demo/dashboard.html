@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block head_extra %}
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .demo-saas {
+      background: #070A0F;
+      color: #F8F4EA;
+      margin: -2rem;
+      padding: 2rem;
+    }
+
+    [x-cloak] {
+      display: none !important;
+    }
+
+    @media (max-width: 760px) {
+      .demo-saas {
+        margin: -1rem;
+        padding: 1rem;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <section class="demo-saas min-h-screen">
+    {% include "demo/_dashboard_state.html" %}
+  </section>
+{% endblock %}

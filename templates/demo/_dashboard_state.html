@@ -1,0 +1,215 @@
+<div id="demo-dashboard-state" class="mx-auto max-w-5xl space-y-5">
+  <section class="rounded-lg border border-white/10 bg-[#0D1118] px-4 py-3 shadow-[0_12px_34px_rgba(0,0,0,0.18)]">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+        <span class="text-sm text-[#A7ADBA]">Live BTC price</span>
+        <strong class="text-xl text-[#F8F4EA]">{{ current_btc_price_display }}</strong>
+        <span class="text-xs text-[#A7ADBA]">Last checked: {{ last_price_checked_at }}</span>
+        <span class="text-xs text-[#A7ADBA]">Source: Coinbase</span>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <form method="post" action="/demo/actions/sync-live-price" hx-post="/demo/actions/sync-live-price" hx-trigger="every 60s" hx-target="#demo-dashboard-state" hx-swap="outerHTML settle:120ms">
+          {% csrf_token %}
+          <button class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-[#F8F4EA] hover:border-[#F5B11B]/60" type="submit">Sync live price</button>
+        </form>
+        <form method="post" action="/demo/actions/reset" hx-post="/demo/actions/reset" hx-target="#demo-dashboard-state" hx-swap="outerHTML settle:120ms">
+          {% csrf_token %}
+          <button class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-[#F8F4EA] hover:border-[#F5B11B]/60" type="submit">Reset demo</button>
+        </form>
+      </div>
+    </div>
+    {% if price_message %}
+      <p class="mt-2 text-xs text-[#F59E7D]">{{ price_message }}</p>
+    {% endif %}
+  </section>
+
+  <section class="rounded-lg border border-white/10 bg-[#0D1118] p-5 shadow-[0_12px_34px_rgba(0,0,0,0.16)]">
+    <div>
+      <h1 class="text-3xl font-semibold tracking-normal text-[#F8F4EA]">Alice buys with Bitcoin</h1>
+      <p class="mt-2 max-w-2xl text-sm leading-6 text-[#A7ADBA]">Each click creates a new sats receipt at the current BTC price.</p>
+    </div>
+    <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {% for item_key, item in purchase_items.items %}
+        <form method="post" action="/demo/actions/alice-buys" hx-post="/demo/actions/alice-buys" hx-target="#demo-dashboard-state" hx-swap="outerHTML settle:120ms">
+          {% csrf_token %}
+          <input type="hidden" name="item_type" value="{{ item_key }}">
+          <button class="h-full w-full rounded-lg bg-[#F5B11B] px-4 py-4 text-left text-sm font-semibold text-[#070A0F] hover:bg-[#F7931A]" type="submit">
+            {{ item.button }}
+            <span class="mt-1 block text-xs font-medium text-[#3A2600]">{{ item.range_display }}</span>
+          </button>
+        </form>
+      {% endfor %}
+    </div>
+    {% if latest_receipt %}
+      <div class="mt-5 rounded-lg border border-[#8FE3B0]/25 bg-[#8FE3B0]/10 p-4 text-sm leading-6 text-[#D9FBE6]">
+        <strong class="block text-[#F8F4EA]">Receipt {{ latest_receipt.receipt_number }} created</strong>
+        <span class="block">Alice spent {{ latest_receipt.usd_spent_display }}</span>
+        <span class="block">Bitcoin spent: {{ latest_receipt.sats_spent_display }}</span>
+        <span class="block">BTC price at payment: {{ latest_receipt.btc_price_at_purchase_display }}</span>
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="grid grid-cols-1 gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+    <div class="rounded-lg border border-[#8FE3B0]/25 bg-[#0D1118] p-5 shadow-[0_12px_34px_rgba(0,0,0,0.16)]">
+      <h2 class="text-xl font-semibold text-[#F8F4EA]">Alice's reward total</h2>
+      <div class="mt-5 rounded-lg border {% if has_reward_ready %}border-[#8FE3B0]/30 bg-[#8FE3B0]/10{% else %}border-white/10 bg-[#111827]{% endif %} p-5">
+        <span class="text-sm text-[#8FE3B0]">Alice reward ready from all receipts</span>
+        <strong class="mt-2 block text-5xl font-semibold tracking-normal text-[#F8F4EA]">{{ reward_ready_usd_display }}</strong>
+        <p class="mt-1 text-base text-[#A7ADBA]">≈{{ reward_ready_sats_display }}</p>
+        <p class="mt-4 text-sm leading-6 text-[#A7ADBA]">
+          Alice has {{ receipt_count }} Bitcoin purchase receipts. At a simulated BTC price of {{ simulated_btc_price_display }}, her receipts have created {{ aggregate_upside_display }} of total BTC upside. Satoshi Cafe shares {{ customer_share_display }}, so Alice has {{ reward_ready_usd_display }} ready.
+        </p>
+      </div>
+      <div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-3">
+        <div><span class="text-xs text-[#A7ADBA]">Total spent at Satoshi Cafe</span><strong class="mt-1 block text-lg text-[#F8F4EA]">{{ total_spent_display }}</strong></div>
+        <div><span class="text-xs text-[#A7ADBA]">Total sats spent</span><strong class="mt-1 block text-lg text-[#F8F4EA]">{{ total_sats_spent_display }}</strong></div>
+        <div><span class="text-xs text-[#A7ADBA]">Simulated BTC price</span><strong class="mt-1 block text-lg text-[#F8F4EA]">{{ simulated_btc_price_display }}</strong></div>
+        <div><span class="text-xs text-[#A7ADBA]">Rewards already paid</span><strong class="mt-1 block text-lg text-[#F8F4EA]">{{ rewards_paid_usd_display }}</strong></div>
+        <div><span class="text-xs text-[#A7ADBA]">Number of receipts</span><strong class="mt-1 block text-lg text-[#F8F4EA]">{{ receipt_count }}</strong></div>
+      </div>
+    </div>
+
+    <div class="rounded-lg border border-white/10 bg-[#0D1118] p-5 shadow-[0_12px_34px_rgba(0,0,0,0.16)]">
+      <h2 class="text-xl font-semibold text-[#F8F4EA]">Simulate BTC upside</h2>
+      <p class="mt-2 text-sm leading-6 text-[#A7ADBA]">Move BTC above Alice's receipt prices to see total rewards.</p>
+      <div class="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <form method="post" action="/demo/actions/current-live-price" hx-post="/demo/actions/current-live-price" hx-target="#demo-dashboard-state" hx-swap="outerHTML settle:120ms">
+          {% csrf_token %}
+          <button class="w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-[#F8F4EA] hover:border-[#F5B11B]/60" type="submit">Current live price</button>
+        </form>
+        {% for label, multiplier in upside_buttons %}
+          <form method="post" action="/demo/actions/advance-price" hx-post="/demo/actions/advance-price" hx-target="#demo-dashboard-state" hx-swap="outerHTML settle:120ms">
+            {% csrf_token %}
+            <input type="hidden" name="multiplier" value="{{ multiplier }}">
+            <button class="w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-[#F8F4EA] hover:border-[#F5B11B]/60" type="submit">{{ label }}</button>
+          </form>
+        {% endfor %}
+      </div>
+      <form class="mt-3 flex gap-2" method="post" action="/demo/actions/set-price" hx-post="/demo/actions/set-price" hx-target="#demo-dashboard-state" hx-swap="outerHTML settle:120ms">
+        {% csrf_token %}
+        <input class="min-w-0 flex-1 rounded-lg border border-white/10 bg-[#070A0F] px-3 py-2 text-sm text-[#F8F4EA] outline-none focus:border-[#F5B11B]/70" name="value" inputmode="decimal" placeholder="Manual simulated price">
+        <button class="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[#070A0F]" type="submit">Set</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+    <div class="rounded-lg border border-white/10 bg-[#0D1118] p-5 shadow-[0_12px_34px_rgba(0,0,0,0.16)]">
+      <h2 class="text-xl font-semibold text-[#F8F4EA]">Selected receipt details</h2>
+      {% if selected_receipt %}
+        <div class="mt-4 rounded-lg border border-white/10 bg-[#111827] p-4">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <strong class="text-xl text-[#F8F4EA]">Receipt {{ selected_receipt.receipt_number }}</strong>
+              <p class="mt-1 text-sm text-[#A7ADBA]">{{ selected_receipt.label }}</p>
+            </div>
+            <span class="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-[#A7ADBA]">{{ selected_receipt.status }}</span>
+          </div>
+          <div class="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+            <span class="text-[#A7ADBA]">USD paid</span><strong class="text-right text-[#F8F4EA]">{{ selected_receipt.usd_spent_display }}</strong>
+            <span class="text-[#A7ADBA]">Sats spent</span><strong class="text-right text-[#F8F4EA]">{{ selected_receipt.sats_spent_display }}</strong>
+            <span class="text-[#A7ADBA]">BTC price when paid</span><strong class="text-right text-[#F8F4EA]">{{ selected_receipt.btc_price_at_purchase_display }}</strong>
+            <span class="text-[#A7ADBA]">Simulated BTC price</span><strong class="text-right text-[#F8F4EA]">{{ simulated_btc_price_display }}</strong>
+            <span class="text-[#A7ADBA]">Reward from this receipt</span><strong class="text-right text-[#F8F4EA]">{{ selected_receipt.reward_usd_display }} / {{ selected_receipt.reward_sats_display }}</strong>
+          </div>
+        </div>
+      {% else %}
+        <div class="mt-4 rounded-lg border border-dashed border-white/15 bg-white/[0.03] p-5 text-sm text-[#A7ADBA]">No receipt yet. Have Alice buy something with Bitcoin.</div>
+      {% endif %}
+    </div>
+
+    <div class="rounded-lg border border-white/10 bg-[#0D1118] p-5 shadow-[0_12px_34px_rgba(0,0,0,0.16)]">
+      <h2 class="text-xl font-semibold text-[#F8F4EA]">How the reward is calculated</h2>
+      <p class="mt-2 text-sm leading-6 text-[#A7ADBA]">Each receipt is calculated separately, then added together.</p>
+      <div class="mt-4 rounded-lg border border-white/10 bg-[#111827] p-4 text-sm leading-6 text-[#A7ADBA]">
+        <p>Receipt BTC spent × BTC price gain × {{ customer_share_display }} = reward from that receipt</p>
+        <p class="mt-2 text-[#F8F4EA]">Alice's total reward ready = sum of all receipt rewards</p>
+        {% if latest_receipt %}
+          <p class="mt-4 text-[#F8F4EA]">Latest receipt example:</p>
+          <p>{{ latest_receipt.btc_spent_display }} × ({{ simulated_btc_price_display }} - {{ latest_receipt.btc_price_at_purchase_display }}) × {{ customer_share_display }} = {{ latest_receipt.reward_usd_display }}</p>
+        {% endif %}
+        <p class="mt-4 text-[#F8F4EA]">All receipts combined:</p>
+        <p>{{ reward_ready_usd_display }} reward ready</p>
+        <p>≈{{ reward_ready_sats_display }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 gap-5 lg:grid-cols-[0.8fr_1.2fr]">
+    <div class="rounded-lg border border-white/10 bg-[#0D1118] p-5 shadow-[0_12px_34px_rgba(0,0,0,0.16)]">
+      <h2 class="text-xl font-semibold text-[#F8F4EA]">Approve Alice's reward</h2>
+      {% if has_reward_ready %}
+        <div class="mt-4 rounded-lg border border-[#8FE3B0]/25 bg-[#8FE3B0]/10 p-4 text-sm leading-6 text-[#D9FBE6]">
+          <span class="block text-[#A7ADBA]">Total ready to approve:</span>
+          <strong class="block text-2xl text-[#F8F4EA]">{{ reward_ready_usd_display }}</strong>
+          <span class="block">≈{{ reward_ready_sats_display }}</span>
+        </div>
+        <form class="mt-4" method="post" action="/demo/actions/authorize-payout" hx-post="/demo/actions/authorize-payout" hx-target="#demo-dashboard-state" hx-swap="outerHTML settle:120ms">
+          {% csrf_token %}
+          <button class="w-full rounded-lg bg-[#F5B11B] px-5 py-4 text-sm font-semibold text-[#070A0F] hover:bg-[#F7931A]" type="submit">Approve total reward</button>
+        </form>
+      {% else %}
+        <div class="mt-4 rounded-lg border border-dashed border-white/15 bg-white/[0.03] p-4 text-sm leading-6 text-[#A7ADBA]">
+          <strong class="block text-[#F8F4EA]">No reward ready yet.</strong>
+          BTC must rise above Alice's receipt prices before a reward appears.
+        </div>
+      {% endif %}
+      {% if latest_payout %}
+        <div class="mt-4 rounded-lg border border-[#8FE3B0]/25 bg-[#8FE3B0]/10 p-4 text-sm leading-6 text-[#8FE3B0]">
+          Alice was paid {{ latest_payout_reward_usd_display }}, about {{ latest_payout_reward_sats_display }}. Future rewards will only come from new BTC upside after this approval.
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="rounded-lg border border-white/10 bg-[#0D1118] p-5 shadow-[0_12px_34px_rgba(0,0,0,0.16)]">
+      <h2 class="text-xl font-semibold text-[#F8F4EA]">Alice totals</h2>
+      <div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
+        <div><span class="text-xs text-[#A7ADBA]">Total spent</span><strong class="mt-1 block text-lg text-[#F8F4EA]">{{ total_spent_display }}</strong></div>
+        <div><span class="text-xs text-[#A7ADBA]">Total sats spent</span><strong class="mt-1 block text-lg text-[#F8F4EA]">{{ total_sats_spent_display }}</strong></div>
+        <div><span class="text-xs text-[#A7ADBA]">Reward ready now</span><strong class="mt-1 block text-lg text-[#F8F4EA]">{{ reward_ready_usd_display }} / {{ reward_ready_sats_display }}</strong></div>
+        <div><span class="text-xs text-[#A7ADBA]">Rewards already paid</span><strong class="mt-1 block text-lg text-[#F8F4EA]">{{ rewards_paid_usd_display }}</strong></div>
+        <div><span class="text-xs text-[#A7ADBA]">Receipts</span><strong class="mt-1 block text-lg text-[#F8F4EA]">{{ receipt_count }}</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rounded-lg border border-white/10 bg-[#0D1118] p-5 shadow-[0_12px_34px_rgba(0,0,0,0.16)]">
+    <h2 class="text-xl font-semibold text-[#F8F4EA]">Alice's sats receipts</h2>
+    <p class="mt-2 text-sm leading-6 text-[#A7ADBA]">Each Bitcoin purchase gets its own receipt and reward calculation.</p>
+    {% if visible_receipts %}
+      <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+        {% for receipt in visible_receipts %}
+          <article class="rounded-lg border border-white/10 bg-[#111827] p-4">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <strong class="text-[#F8F4EA]">Receipt {{ receipt.receipt_number }}</strong>
+                <p class="mt-1 text-xs text-[#A7ADBA]">{{ receipt.label }}</p>
+              </div>
+              <form method="post" action="/demo/actions/select-receipt" hx-post="/demo/actions/select-receipt" hx-target="#demo-dashboard-state" hx-swap="outerHTML settle:120ms">
+                {% csrf_token %}
+                <input type="hidden" name="receipt_id" value="{{ receipt.id }}">
+                <button class="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-[#F8F4EA]" type="submit">Select</button>
+              </form>
+            </div>
+            <div class="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+              <span class="text-[#A7ADBA]">USD paid</span><strong class="text-right text-[#F8F4EA]">{{ receipt.usd_spent_display }}</strong>
+              <span class="text-[#A7ADBA]">Sats spent</span><strong class="text-right text-[#F8F4EA]">{{ receipt.sats_spent_display }}</strong>
+              <span class="text-[#A7ADBA]">BTC price when paid</span><strong class="text-right text-[#F8F4EA]">{{ receipt.btc_price_at_purchase_display }}</strong>
+              <span class="text-[#A7ADBA]">Simulated BTC price</span><strong class="text-right text-[#F8F4EA]">{{ simulated_btc_price_display }}</strong>
+              <span class="text-[#A7ADBA]">Reward from this receipt</span><strong class="text-right text-[#F8F4EA]">{{ receipt.reward_usd_display }} / {{ receipt.reward_sats_display }}</strong>
+              <span class="text-[#A7ADBA]">Status</span><strong class="text-right text-[#F8F4EA]">{{ receipt.status }}</strong>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+      {% if has_older_receipts %}
+        <div class="mt-4 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-[#A7ADBA]">Show older receipts</div>
+      {% endif %}
+    {% else %}
+      <div class="mt-4 rounded-lg border border-dashed border-white/15 bg-white/[0.03] p-5 text-sm text-[#A7ADBA]">No receipt yet. Have Alice buy something with Bitcoin.</div>
+    {% endif %}
+  </section>
+
+  <p class="pb-2 text-xs leading-5 text-[#A7ADBA]">Rewards are variable, merchant-funded, and depend on BTC price movement and merchant rules. No reward is guaranteed.</p>
+</div>

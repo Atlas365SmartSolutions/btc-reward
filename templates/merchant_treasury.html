@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="stack">
+    <div class="panel">
+      <p class="eyebrow">Treasury coverage</p>
+      <h1>Treasury</h1>
+      <p class="lead">Treasury snapshots define whether the merchant can safely keep rewarding customers without breaking reserve rules.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel__header">
+        <div>
+          <p class="eyebrow">Coverage summary</p>
+          <h2>Reserve health</h2>
+        </div>
+        {% if reserve_health.is_healthy %}
+          <span class="status status--ok">Healthy</span>
+        {% else %}
+          <span class="status status--bad">Pause accrual</span>
+        {% endif %}
+      </div>
+      <div class="metric-grid">
+        <div class="metric-card">
+          <span class="metric-card__label">Coverage ratio:</span>
+          <span class="metric-card__value">{{ coverage_ratio }}</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-card__label">Treasury allocated:</span>
+          <span class="metric-card__value">${{ reserve_health.treasury_allocated_usd }}</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-card__label">Eligible liabilities:</span>
+          <span class="metric-card__value">${{ reserve_health.eligible_liabilities_usd }}</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-card__label">Minimum coverage:</span>
+          <span class="metric-card__value">{{ reserve_health.min_coverage_ratio }}</span>
+        </div>
+      </div>
+    </div>
+
+    {% if wallets %}
+      <div class="stack">
+        {% for wallet in wallets %}
+          <article class="card">
+            <div class="merchant-card__top">
+              <div class="font-medium">{{ wallet.label }}</div>
+              <span class="badge">{{ wallet.status }}</span>
+            </div>
+            <div class="merchant-card__meta">
+              <span class="badge">Wallet ID: {{ wallet.id }}</span>
+              <span class="badge">BTC balance: {{ wallet.btc_balance }}</span>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if snapshots %}
+      <div class="stack">
+        {% for snapshot in snapshots %}
+          <article class="card">
+            <div class="merchant-card__top">
+              <div class="font-medium">Snapshot {{ snapshot.id }}</div>
+              <span class="badge">{{ snapshot.created_at }}</span>
+            </div>
+            <div class="merchant-card__meta">
+              <span class="badge">Wallet: {{ snapshot.treasury_wallet_id }}</span>
+              <span class="badge">Allocated USD: ${{ snapshot.allocated_usd_value }}</span>
+              <span class="badge">Coverage ratio: {{ snapshot.coverage_ratio }}</span>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% elif not wallets %}
+      <div class="empty-state">Treasury coverage for {{ merchant_id }}</div>
+    {% endif %}
+  </section>
+{% endblock %}
